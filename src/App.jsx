@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./App.css";
 
 export default function App() {
   const [telemetry, setTelemetry] = useState([]);
@@ -10,78 +11,64 @@ export default function App() {
       .catch(() => setTelemetry([]));
   }, []);
 
-  const latest = telemetry.length ? telemetry[telemetry.length - 1] : {};
+  const latest = telemetry.at(-1) || {};
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      {/* Header */}
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">
-          IoT Egg Monitoring Dashboard
-        </h1>
-        <p className="text-gray-500">
-          Real‑time incubator environment status
-        </p>
-      </header>
+    <div className="app-container">
+      <h1 className="dashboard-title">IoT Egg Monitoring Dashboard</h1>
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white rounded-xl shadow p-5">
-          <p className="text-sm text-gray-500">Temperature</p>
-          <p className="text-4xl font-bold text-orange-500">
-            {latest.temp ?? "--"}°C
+      {/* STAT CARDS */}
+      <div className="card-grid">
+        <div className="stat-card">
+          <p className="stat-label">Temperature</p>
+          <p className="stat-value temp">
+            {latest.temp ?? "--"} °C
           </p>
         </div>
 
-        <div className="bg-white rounded-xl shadow p-5">
-          <p className="text-sm text-gray-500">Humidity</p>
-          <p className="text-4xl font-bold text-blue-500">
-            {latest.humidity ?? "--"}%
+        <div className="stat-card">
+          <p className="stat-label">Humidity</p>
+          <p className="stat-value humidity">
+            {latest.humidity ?? "--"} %
           </p>
         </div>
 
-        <div className="bg-white rounded-xl shadow p-5">
-          <p className="text-sm text-gray-500">Turner Status</p>
-          <p className="text-2xl font-semibold text-green-600">
+        <div className="stat-card">
+          <p className="stat-label">Turner</p>
+          <p className="stat-value turner">
             {latest.turner ? "ON" : "OFF"}
           </p>
         </div>
       </div>
 
-      {/* Telemetry Table */}
-      <div className="bg-white rounded-xl shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Telemetry Logs</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b">
-                <th className="py-2">Time</th>
-                <th className="py-2">Temp (°C)</th>
-                <th className="py-2">Humidity (%)</th>
-                <th className="py-2">Turner</th>
+      {/* TELEMETRY TABLE */}
+      <div className="table-container">
+        <h2 className="table-title">Telemetry Logs</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Temperature</th>
+              <th>Humidity</th>
+              <th>Turner</th>
+            </tr>
+          </thead>
+          <tbody>
+            {telemetry.map((t, i) => (
+              <tr key={i}>
+                <td>{t.time}</td>
+                <td>{t.temp}</td>
+                <td>{t.humidity}</td>
+                <td>{t.turner ? "ON" : "OFF"}</td>
               </tr>
-            </thead>
-            <tbody>
-              {telemetry.map((t, i) => (
-                <tr key={i} className="border-b last:border-none">
-                  <td className="py-2">{t.time}</td>
-                  <td className="py-2">{t.temp}</td>
-                  <td className="py-2">{t.humidity}</td>
-                  <td className="py-2">
-                    {t.turner ? "ON" : "OFF"}
-                  </td>
-                </tr>
-              ))}
-              {!telemetry.length && (
-                <tr>
-                  <td colSpan="4" className="py-4 text-center text-gray-400">
-                    No data available
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+            ))}
+            {!telemetry.length && (
+              <tr>
+                <td colSpan="4">No telemetry data</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

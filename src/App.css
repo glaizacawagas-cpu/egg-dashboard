@@ -1,42 +1,101 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* App.css – Egg Monitoring Dashboard */
+
+/* Page wrapper */
+.app-container {
+  min-height: 100vh;
+  padding: 24px;
+  background-color: #f4f6f8;
+}
+
+/* Dashboard title */
+.dashboard-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #1f2937;
+}
+
+/* Cards grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* Individual stat card */
+.stat-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.stat-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+/* Colors (matches Figma style) */
+.temp {
+  color: #f97316; /* orange */
+}
+
+.humidity {
+  color: #3b82f6; /* blue */
+}
+
+.turner {
+  color: #16a34a; /* green */
+}
+
+/* Table container */
+.table-container {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.table-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* Telemetry table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #f9fafb;
+}
+
+th,
+td {
+  padding: 12px;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+th {
+  font-size: 0.875rem;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+td {
+  font-size: 0.875rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+tr:last-child td {
+  border-bottom: none;
 }
