@@ -99,22 +99,38 @@ function Dashboard() {
    FAN SCHEDULER
 ====================== */
 function FanScheduler() {
+  const [enabled, setEnabled] = useState(false);
+
   return (
-    <div className="control-card">
+    <div className={`control-card ${!enabled ? "disabled-card" : ""}`}>
       <h3>⏲ Fan Scheduler</h3>
 
       <div className="toggle-row">
         <span>Enable Schedule</span>
         <label className="toggle">
-          <input type="checkbox" />
+          <input
+            type="checkbox"
+            checked={enabled}
+            onChange={() => setEnabled(!enabled)}
+          />
           <span className="slider"></span>
         </label>
       </div>
 
-      <input placeholder="Run duration (hours)" />
-      <input placeholder="Interval (hours)" />
+      <input
+        placeholder="Run duration (hours)"
+        disabled={!enabled}
+      />
 
-      <button className="apply-btn apply-temp">
+      <input
+        placeholder="Interval (hours)"
+        disabled={!enabled}
+      />
+
+      <button
+        className="apply-btn apply-temp"
+        disabled={!enabled}
+      >
         Load Saved Schedule
       </button>
 
@@ -123,26 +139,43 @@ function FanScheduler() {
   );
 }
 
+
 /* ======================
    EGG TURNER SCHEDULER
 ====================== */
 function EggTurnerScheduler() {
+  const [enabled, setEnabled] = useState(false);
+
   return (
-    <div className="control-card">
+    <div className={`control-card ${!enabled ? "disabled-card" : ""}`}>
       <h3>⟳ Egg Turner Scheduler</h3>
 
       <div className="toggle-row">
         <span>Enable Schedule</span>
         <label className="toggle">
-          <input type="checkbox" />
+          <input
+            type="checkbox"
+            checked={enabled}
+            onChange={() => setEnabled(!enabled)}
+          />
           <span className="slider"></span>
         </label>
       </div>
 
-      <input placeholder="Turn duration (minutes)" />
-      <input placeholder="Interval (hours)" />
+      <input
+        placeholder="Turn duration (minutes)"
+        disabled={!enabled}
+      />
 
-      <button className="apply-btn apply-humidity">
+      <input
+        placeholder="Interval (hours)"
+        disabled={!enabled}
+      />
+
+      <button
+        className="apply-btn apply-humidity"
+        disabled={!enabled}
+      >
         Load Saved Schedule
       </button>
 

@@ -374,3 +374,29 @@ input[type="range"] {
     font-size: 2rem;
   }
 }
+
+/* ===== Disabled Scheduler Style ===== */
+.disabled-card {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.disabled-card .toggle {
+  pointer-events: auto; /* allow toggle only */
+}
+
+input:disabled {
+  background: #f1f5f9;
+  cursor: not-allowed;
+}
+
+button:disabled {
+  background: #cbd5e1 !important;
+  cursor: not-allowed;
+}
+
+
+/* Add spacing BELOW Fan & Egg Turner Scheduler */
+.controller-grid {
+  margin-bottom: 32px; /* adjust if you want more space */
+}
