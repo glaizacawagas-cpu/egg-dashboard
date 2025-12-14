@@ -10,9 +10,6 @@ import {
   CartesianGrid
 } from "recharts";
 
-/* ======================
-   MAIN APP (NO SIDEBAR)
-====================== */
 export default function App() {
   return (
     <main className="main-content">
@@ -21,17 +18,24 @@ export default function App() {
   );
 }
 
-/* ======================
-   DASHBOARD (ALL-IN-ONE)
-====================== */
 function Dashboard() {
   const [telemetry, setTelemetry] = useState([]);
+  const [fanEnabled, setFanEnabled] = useState(false);
+  const [turnerEnabled, setTurnerEnabled] = useState(false);
 
   const fetchTelemetry = () => {
     fetch("/api/telemetry")
       .then(res => res.json())
       .then(setTelemetry)
       .catch(console.error);
+  };
+
+  const sendControl = (data) => {
+    fetch("/api/controller", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
   };
 
   useEffect(() => {
@@ -46,64 +50,43 @@ function Dashboard() {
     <div className="app-container">
       <h1 className="dashboard-title">IoT Egg Incubator Dashboard</h1>
 
-      {/* ===== TOP STATUS CARDS ===== */}
       <div className="card-grid">
-        <StatCard
-          label="🌡 Temperature"
-          value={`${latest.temp ?? "--"}°C`}
-          sub="Logged every 15 minutes"
-          className="temp"
-        />
-        <StatCard
-          label="💧 Humidity"
-          value={`${latest.humidity ?? "--"}%`}
-          sub="Logged every 15 minutes"
-          className="humidity"
-        />
-        <StatCard
-          label="🛜 Device Status"
-          value="Online"
-          sub="Last sync: 09:00"
-          className="status-green"
-        />
+        <StatCard label="🌡 Temperature" value={`${latest.temp ?? "--"}°C`} />
+        <StatCard label="💧 Humidity" value={`${latest.humidity ?? "--"}%`} />
+        <StatCard label="🛜 Device Status" value="Online" />
       </div>
 
-      {/* ===== SCHEDULERS ===== */}
       <div className="controller-grid two-cols">
-        <FanScheduler />
-        <EggTurnerScheduler />
+        <Scheduler
+          title="⏲ Fan Scheduler"
+          enabled={fanEnabled}
+          onToggle={(v) => {
+            setFanEnabled(v);
+            sendControl({ fanEnabled: v });
+          }}
+        />
+        <Scheduler
+          title="⟳ Egg Turner Scheduler"
+          enabled={turnerEnabled}
+          onToggle={(v) => {
+            setTurnerEnabled(v);
+            sendControl({ turnerEnabled: v });
+          }}
+        />
       </div>
 
-      {/* ===== CHARTS ===== */}
       <div className="card-grid two-cols">
-        <ChartCard
-          title="Temperature (15-min Interval)"
-          data={telemetry}
-          dataKey="temp"
-          color="#f97316"
-          domain={[35, 40]}
-        />
-        <ChartCard
-          title="Humidity (15-min Interval)"
-          data={telemetry}
-          dataKey="humidity"
-          color="#3b82f6"
-          domain={[40, 80]}
-        />
+        <Chart title="Temperature" data={telemetry} keyName="temp" />
+        <Chart title="Humidity" data={telemetry} keyName="humidity" />
       </div>
     </div>
   );
 }
 
-/* ======================
-   FAN SCHEDULER
-====================== */
-function FanScheduler() {
-  const [enabled, setEnabled] = useState(false);
-
+function Scheduler({ title, enabled, onToggle }) {
   return (
     <div className={`control-card ${!enabled ? "disabled-card" : ""}`}>
-      <h3>⏲ Fan Scheduler</h3>
+      <h3>{title}</h3>
 
       <div className="toggle-row">
         <span>Enable Schedule</span>
@@ -111,83 +94,22 @@ function FanScheduler() {
           <input
             type="checkbox"
             checked={enabled}
-            onChange={() => setEnabled(!enabled)}
+            onChange={() => onToggle(!enabled)}
           />
           <span className="slider"></span>
         </label>
       </div>
 
-      <input
-        placeholder="Run duration (hours)"
-        disabled={!enabled}
-      />
-
-      <input
-        placeholder="Interval (hours)"
-        disabled={!enabled}
-      />
-
-      <button
-        className="apply-btn apply-temp"
-        disabled={!enabled}
-      >
-        Load Saved Schedule
+      <input placeholder="Run duration" disabled={!enabled} />
+      <input placeholder="Interval" disabled={!enabled} />
+      <button disabled={!enabled} className="apply-btn apply-temp">
+        Load Schedule
       </button>
-
-      <p className="stat-label">Example: Run 1 hr every 3 hrs</p>
     </div>
   );
 }
 
-
-/* ======================
-   EGG TURNER SCHEDULER
-====================== */
-function EggTurnerScheduler() {
-  const [enabled, setEnabled] = useState(false);
-
-  return (
-    <div className={`control-card ${!enabled ? "disabled-card" : ""}`}>
-      <h3>⟳ Egg Turner Scheduler</h3>
-
-      <div className="toggle-row">
-        <span>Enable Schedule</span>
-        <label className="toggle">
-          <input
-            type="checkbox"
-            checked={enabled}
-            onChange={() => setEnabled(!enabled)}
-          />
-          <span className="slider"></span>
-        </label>
-      </div>
-
-      <input
-        placeholder="Turn duration (minutes)"
-        disabled={!enabled}
-      />
-
-      <input
-        placeholder="Interval (hours)"
-        disabled={!enabled}
-      />
-
-      <button
-        className="apply-btn apply-humidity"
-        disabled={!enabled}
-      >
-        Load Saved Schedule
-      </button>
-
-      <p className="stat-label">Example: Turn every 4 hours</p>
-    </div>
-  );
-}
-
-/* ======================
-   CHART CARD
-====================== */
-function ChartCard({ title, data, dataKey, color, domain }) {
+function Chart({ title, data, keyName }) {
   return (
     <div className="stat-card">
       <h3>{title}</h3>
@@ -195,30 +117,20 @@ function ChartCard({ title, data, dataKey, color, domain }) {
         <LineChart data={data}>
           <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
           <XAxis dataKey="time" />
-          <YAxis domain={domain} />
+          <YAxis />
           <Tooltip />
-          <Line
-            type="monotone"
-            dataKey={dataKey}
-            stroke={color}
-            strokeWidth={3}
-            dot={{ r: 4 }}
-          />
+          <Line dataKey={keyName} stroke="#16a34a" strokeWidth={3} />
         </LineChart>
       </ResponsiveContainer>
     </div>
   );
 }
 
-/* ======================
-   STAT CARD
-====================== */
-function StatCard({ label, value, sub, className }) {
+function StatCard({ label, value }) {
   return (
     <div className="stat-card">
       <p className="stat-label">{label}</p>
-      <p className={`stat-value ${className}`}>{value}</p>
-      <p className="stat-sub">{sub}</p>
+      <p className="stat-value">{value}</p>
     </div>
   );
 }
