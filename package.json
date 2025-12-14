@@ -2,8 +2,11 @@
   "name": "egg-dashboard",
   "private": true,
   "scripts": {
-  "dev": "vite",
-  "build": "vite build",
-  "preview": "vite preview"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "recharts": "^3.5.1"
   }
-  }
+}
